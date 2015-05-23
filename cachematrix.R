@@ -9,7 +9,8 @@ makeCacheMatrix <- function(x = matrix()) {
         set <- function(y) {
                 #Super assignement 
                 x <<- y
-                m <<- NULL
+                #object inv holds the cached inverted matrix and is initially null
+                inv <<- NULL
         }
         get <- function() x
         setinverse <- function(inverse) m <<- inverse
@@ -23,21 +24,28 @@ makeCacheMatrix <- function(x = matrix()) {
 #Returns on SUBSEQUENT invocations the cached inverted matrixk
 cacheSolve <- function(x, ...) {
         ## Return a matrix that is the inverse of 'x'
-        m <- x$getinverse()
-        if(!is.null(m)) {
-                message("getting cached data")
-                return(m)
-        }
+        inv <- x$getinverse()
+        matInput = x$get() 
+        
+        if(!is.null(inv)) {
+                  message("getting cached data")
+                  return(inv)
+          }
+
         data <- x$get()
-        m <- solve(data, ...)
-        x$setinverse(m)
-        m
+        inv <- solve(data, ...)
+        x$setinverse(inv)
+        inv
 } 
- 
+  
 #Exercise the functions.  See if the message is received on tries 2 and 3
-tstInverse <- makeCacheMatrix(matrix(c(1,2,3,4), nrow=2, ncol=2))
+tstInverse <- makeCacheMatrix( matrix(c(1:4)   , nrow=2  ))
+    
  
-rslt <- cacheSolve(tstInverse)
-rslt <- cacheSolve(tstInverse)
-rslt <- cacheSolve(tstInverse)
-str(rslt)
+                              
+#First call should take longer and set the chached variable
+rslt <- cacheSolve(tstInverse)   
+#Second call should give message "getting cached data" and run faster
+rslt <- cacheSolve(tstInverse) 
+  
+rslt   
